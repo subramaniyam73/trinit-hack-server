@@ -1,13 +1,19 @@
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import prisma from '../config/prismaClient';
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   ignoreExpiration: true,
-  secretOrKey: JWT_SECRET
+  secretOrKey: process.env.JWT_SECRET
 };
 
-passport.use(
-  new Strategy(options, payload => {
-    // return user object from db using payload.email
-  })
-);
+const JwtStrategy = new Strategy(options, async (payload, cb) => {
+  const user = await prisma.user.findUnique({
+    where: { email: payload.email }
+  });
+  if (!user) return cb(null, false);
+  const { password, ...result } = user;
+  return cb(null, result);
+});
+
+export default JwtStrategy;
