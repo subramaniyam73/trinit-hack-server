@@ -10,6 +10,6 @@ app.use(cors());
 
 app.use(authRouter);
 
-app.listen(process.env.PORT || 4000, () =>
+app.listen(process.env.PORT || 3000, () =>
   console.log(`Server running at port ${process.env.PORT || 4000}\nOrz`)
 );
